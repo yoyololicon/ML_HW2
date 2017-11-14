@@ -1,11 +1,10 @@
 import numpy as np
 from scipy import io
-from scipy.stats import wishart, multivariate_normal
 import sys
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print('usage: %s <inputfile> <N> <number of random precision>' % sys.argv[0])
+    if len(sys.argv) < 2:
+        print('usage: %s <inputfile>' % sys.argv[0])
         sys.exit(1)
 
     data = io.loadmat(sys.argv[1])
@@ -13,34 +12,33 @@ if __name__ == '__main__':
         if key[0:2] != '__':
             data = data[key]
             break
-    N = int(sys.argv[2])
-    rand_p = int(sys.argv[3])
+    test_N = [10, 100, 500]
 
     total, D = data.shape
+    if total < test_N[-1]:
+        print('Error: the number of data should bigger than %d' % test_N[-1])
+        sys.exit(1)
     true_cov = np.cov(data.T)
-    #rand_data = data[np.random.choice(data.shape[0], N, replace=False), :]
 
-    w0 = np.identity(D)
-    v0 = 1
+    prior_w = np.identity(D)
+    prior_v = 1
     mean = np.array([1, -1])
 
-    post_v = v0+N
-    post_w = np.linalg.inv(w0)
-    for i in range(N):
-        post_w += np.outer(data[i]-mean, data[i]-mean)
-    post_w = np.linalg.inv(post_w)
-
-    test = wishart.rvs(df=D, scale=w0, size=rand_p)
-    probability = np.empty(rand_p)
-    print '----testing----'
-    for i in range(rand_p):
-        probability[i] = wishart.pdf(test[i], df=post_v, scale=post_w)
-
-    pMAP = np.argmax(probability)
-    covMAP = np.linalg.inv(test[pMAP])
-    print 'the MAP solution of covariance after reading', N, 'input is'
-    print covMAP
     print 'the true covariance is'
     print true_cov
-    print 'error', np.mean(np.abs(covMAP-true_cov))
-    print 'the posterior probability of the MAP solution is', probability[pMAP]
+
+    for N in test_N:
+        print '< N =', N, '>'
+        post_v = prior_v+N
+        post_w = np.linalg.inv(prior_w)
+        for i in range(N):
+            post_w += np.outer(data[i]-mean, data[i]-mean)
+        post_w = np.linalg.inv(post_w)
+
+        covMEAN = np.linalg.inv(post_w*N)
+        covMAP = np.linalg.inv(post_w*(post_v-D-1))
+        print 'the MAP solution of covariance is'
+        print covMAP
+        print 'the mean of covariance is'
+        print covMEAN
+        print 'error of MAP solution is', np.mean(np.abs(covMAP-true_cov))
