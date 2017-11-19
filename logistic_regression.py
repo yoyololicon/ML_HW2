@@ -45,14 +45,17 @@ if __name__ == '__main__':
         sys.exit(1)
 
     train = pd.read_csv(sys.argv[1]).values
+    test = pd.read_csv(sys.argv[2]).values
     [train_t, train_x] = np.split(train, [3], axis=1)
 
     W = np.zeros([train_t.shape[1], train_x.shape[1]])
     stop_c = 0.01
     entropy = []
     accuracy = []
+    parameters = []
 
     while 1:
+        parameters.append(W)
         a = np.dot(train_x, W.T)
         y = softmax2(a)
         entropy.append(cross_entropy(y, train_t))
@@ -63,6 +66,7 @@ if __name__ == '__main__':
         if math.isnan(entropy[-1]):
             entropy.pop()
             accuracy.pop()
+            parameters.pop()
             break
         E = dev1_cross_entropy(y, train_t, train_x)
         H_inv = np.linalg.inv(dev2_cross_entropy(y, train_x))
@@ -76,3 +80,7 @@ if __name__ == '__main__':
     ax[1].set_xlabel('Epoch Number')
     ax[1].set_ylabel('Loss')
     plt.show()
+
+    y = softmax2(np.dot(test, parameters[-1].T))
+    print 'The test data classification result is :'
+    print np.round(y)
