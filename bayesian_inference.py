@@ -30,15 +30,10 @@ if __name__ == '__main__':
     for N in test_N:
         print '< N =', N, '>'
         post_v = prior_v+N
-        post_w = np.linalg.inv(prior_w)
-        for i in range(N):
-            post_w += np.outer(data[i]-mean, data[i]-mean)
+        post_w = np.linalg.inv(prior_w) + np.dot((data[:N] - mean).T, data[:N] - mean)
         post_w = np.linalg.inv(post_w)
 
-        covMEAN = np.linalg.inv(post_w*N)
         covMAP = np.linalg.inv(post_w*(post_v-D-1))
         print 'the MAP solution of covariance is'
         print covMAP
-        print 'the mean of covariance is'
-        print covMEAN
-        print 'error of MAP solution is', np.mean(np.abs(covMAP-true_cov))
+        print 'Error of MAP solution is', np.mean(np.abs(covMAP-true_cov))
