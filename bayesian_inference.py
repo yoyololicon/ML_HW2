@@ -36,4 +36,4 @@ if __name__ == '__main__':
         covMAP = np.linalg.inv(post_w*(post_v-D-1))
         print 'the MAP solution of covariance is'
         print covMAP
-        print 'Error of MAP solution is', np.mean(np.abs(covMAP-true_cov))
+        print 'error of MAP solution is', np.mean(np.abs(covMAP-true_cov))

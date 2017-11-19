@@ -13,7 +13,7 @@ def pos_mapping(number):
             return i[1]
 
 def sigmoid(x):
-  return 1 / (1 + math.exp(-x))
+    return 1 / (1 + math.exp(-x))
 
 def get_posterior(a, b, XX, t):
     D = len(XX[0, :])

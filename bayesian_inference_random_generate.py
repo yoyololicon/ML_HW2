@@ -25,9 +25,7 @@ if __name__ == '__main__':
     mean = np.array([1, -1])
 
     post_v = v0+N
-    post_w = np.linalg.inv(w0)
-    for i in range(N):
-        post_w += np.outer(rand_data[i]-mean, rand_data[i]-mean)
+    post_w = np.linalg.inv(w0) + np.dot((data[:N] - mean).T, data[:N] - mean)
     post_w = np.linalg.inv(post_w)
 
     test = wishart.rvs(df=post_v, scale=post_w, size=rand_p)
