@@ -49,7 +49,7 @@ if __name__ == '__main__':
     plt.legend()
     plt.show()
 
-    stop_c = 0.01
+    stop_c = 83
     entropy = []
     accuracy = []
     parameters = []
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         y = lr.softmax2(a)
         entropy.append(lr.cross_entropy(y, train_t))
         accuracy.append(lr.evaluate(y, train_t))
-        print 'E(W)', entropy[-1], 'accuracy', accuracy[-1]
+        #print 'E(W)', entropy[-1], 'accuracy', accuracy[-1]
         if entropy[-1] < stop_c:
             break
         if math.isnan(entropy[-1]):
@@ -73,7 +73,7 @@ if __name__ == '__main__':
             break
         E = lr.dev1_cross_entropy(y, train_t, new_x)
         H_inv = np.linalg.inv(lr.dev2_cross_entropy(y, new_x))
-        W -= np.tensordot(H_inv, E, axes=([1, 3], [0, 1]))
+        W -= np.tensordot(H_inv, E, axes=([1, 3], [0, 1]))*0.01
 
     fig, ax = plt.subplots(2, 1, sharex='col')
     ax[0].plot(accuracy)
@@ -86,4 +86,4 @@ if __name__ == '__main__':
 
     y = lr.softmax2(np.dot(test[:, final_var], parameters[-1].T))
     print 'The test data classification result is :'
-    print np.round(y)
+    print np.argmax(y, axis=1)

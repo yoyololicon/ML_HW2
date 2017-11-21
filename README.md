@@ -3,7 +3,7 @@
 ## Environment
 
 * ubuntu 16.04 LTS
-* python2.7.12(using Pycharm 2017.2.3)
+* python2.7.12 (using Pycharm 2017.2.4)
 * extra modules: numpy, scipy, pandas
 
 ## Usage of each file
@@ -69,3 +69,5 @@ python bayesian_lin_regress_show_region.py 2_data.mat
 ```
 This will plot four image similar to Fig. 3.8 on the testbook for different N, like the following image:
 ![](blr_2.png)
+
+### Logistic Regression (HW 3-1~3, 3-5, 3-6)
