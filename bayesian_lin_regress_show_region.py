@@ -23,11 +23,10 @@ if __name__ == '__main__':
     alpha = 1./math.pow(10, 6)
     beta = 1
 
-    x = np.linspace(0, 2, 30)
-    x_smooth = np.linspace(0, 2, 300)
-    y = np.empty(30)
-    y1 = np.empty(30)
-    y2 = np.empty(30)
+    x = np.linspace(0, 2, 300)
+    y = np.empty(300)
+    y1 = np.empty(300)
+    y2 = np.empty(300)
 
     f, axarr = plt.subplots(2, 2)
 
@@ -36,7 +35,7 @@ if __name__ == '__main__':
         post_mean, post_var = blr.get_posterior(alpha, beta, blr.get_basis_form(u, X[:N], s), T[:N])
 
 
-        for i in range(30):
+        for i in range(300):
             trans_x = np.squeeze(blr.get_basis_form(u, np.array([x[i]]), s))
             y[i] = np.dot(post_mean.T, trans_x)
             rand_var = 1./beta + np.linalg.multi_dot([trans_x.T, post_var, trans_x])
@@ -44,11 +43,8 @@ if __name__ == '__main__':
             y1[i] = y[i] + std
             y2[i] = y[i] - std
 
-        y_smooth = spline(x, y, x_smooth)
-        y1_smooth = spline(x, y1, x_smooth)
-        y2_smooth = spline(x, y2, x_smooth)
-        axarr[pos].plot(x_smooth, y_smooth, 'r-')
-        axarr[pos].fill_between(x_smooth, y1_smooth, y2_smooth, facecolor='pink', edgecolor='none')
+        axarr[pos].plot(x, y, 'r-')
+        axarr[pos].fill_between(x, y1, y2, facecolor='pink', edgecolor='none')
 
         axarr[pos].scatter(X[:N], T[:N], s=80, facecolors='none', edgecolors='b')
         axarr[pos].set_title('N = %d' % N)
